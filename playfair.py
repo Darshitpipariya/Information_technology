@@ -32,5 +32,14 @@ def key_mat(key):
 #darshit
 def diagraph(plaintext):
     l1=[]
-    for i in plaintext:
-        
+    curent=0
+    while(curent<len(plaintext)):
+        l=['','']
+        for j in range(2):
+            if curent<len(plaintext):
+                if()
+                l[j]=plaintext[curent]
+                curent+=1
+        l1.append(l)
+    print(l1)
+diagraph("darshit")
