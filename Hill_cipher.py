@@ -51,7 +51,27 @@ def key_matrix(key, dim):
 
 def deter(k_matrix):
     a = np.array(k_matrix)
-    return int(np.linalg.det(a))
+    return int(round(np.linalg.det(a)))
+
+
+def inver_mat(k_matrix):
+    a = np.array(k_matrix)
+    a = np.linalg.inv(a)
+    d = deter(k_matrix)
+    a = deter(k_matrix) * a
+    x = 1
+    while True:
+        if((d*x) % 26 == 1):
+            break
+        x += 1
+    a = (a*x) % 26
+    x = []
+    for i in a.tolist():
+        b = []
+        for j in i:
+            b.append(int(round(j)))
+        x.append(b)
+    return x
 
 
 def mat_mul(k_matrix, message_matrix):
@@ -59,16 +79,60 @@ def mat_mul(k_matrix, message_matrix):
     arr2 = np.array(message_matrix)
     arr_result = np.matmul(arr1, arr2)
     arr_result = arr_result % 26
+    return arr_result.tolist()
 
 
-
-
-def Encryption():
+def encryption():
     plaintext = input("Enter plaintext: ")
     key = input("Enter key: ")
-    dim=int(input("Enter dim"))
-    k_m=key_matrix(key,dim)
-    p_ve=message(plaintext,dim)
-    cipher=[]
+    dim = int(input("Enter dim: "))
+    k_m = key_matrix(key, dim)
+    p_ve = message(plaintext, dim)
+    cipher = []
+    c = []
+    ct = ""
     for i in p_ve:
-        cipher.append(mat_mul(k_m,i))
+        cipher.extend(mat_mul(k_m, i))
+    lower_alpha = "abcdefghijklmnopqrstuvwxyz"
+    upper_alpha = lower_alpha.upper()
+    for i in cipher:
+        for j in i:
+            ct += lower_alpha[j]
+    print(ct)
+
+
+def decryption():
+    ciphertext = input("Enter ciphertext: ")
+    key = input("Enter key: ")
+    dim = int(input("Enter dim: "))
+    k_m = key_matrix(key, dim)
+    if (deter(k_m) == 0 or deter(k_m) == 13 or deter(k_m) % 2 == 0):
+        print("Decryption not possible")
+    else:
+        k_m = inver_mat(k_m)
+        p_ve = message(ciphertext, dim)
+        cipher = []
+        c = []
+        ct = ""
+        for i in p_ve:
+            cipher.extend(mat_mul(k_m, i))
+        lower_alpha = "abcdefghijklmnopqrstuvwxyz"
+        for i in cipher:
+            for j in i:
+                ct += lower_alpha[j]
+        print(ct)
+
+
+if __name__ == "__main__":
+    print("________ Hill cipher________")
+    while True:
+        choice = int(
+            input("Enter choice\n1:Encryption\n2:Decryption\n3:Exit\n"))
+        if (choice == 1):
+            encryption()
+        elif(choice == 2):
+            decryption()
+        elif(choice == 3):
+            break
+        else:
+            print("Invalid choice")
